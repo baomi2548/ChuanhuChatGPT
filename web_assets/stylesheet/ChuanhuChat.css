@@ -51,7 +51,7 @@ body.popup-open {
 }
 
 .hideK {
-    display: none;
+    display: none !important;
 }
 
 #app-title,
@@ -232,6 +232,8 @@ body.popup-open {
 
 
 #popup-wrapper {
+    width: 100dvw;
+    height: 100dvh;
     display: none;
     position: fixed;
     overflow: auto;
@@ -300,10 +302,10 @@ body.popup-open {
     display: inline-flex;
     justify-content: space-between;
     /* margin-top: 54px; */
-    /* height: calc(100*var(--vh) - 72px); */
+    /* height: calc(100dvh - 72px); */
     position: absolute;
     top: 65px;
-    height: calc(100*var(--vh) - 65px);
+    height: calc(100dvh - 65px);
 }
 
 #chuanhu-area {
@@ -416,6 +418,12 @@ body.popup-open {
 }
 .is-gpt .show-on-gpt {
     /* visibility: visible; */
+    display: block;
+}
+.show-on-description {
+    display: none;
+}
+.has-description .show-on-description {
     display: block;
 }
 
@@ -638,7 +646,7 @@ input:checked + .chatbot-input-more-span {
 #menu-area.showSide {
     width: var(--menu-width);
     max-width: var(--menu-width);
-    height: calc(100*var(--vh) - 65px);
+    height: calc(100dvh - 65px);
     visibility: visible;
     /* margin-right: 16px; */
     border-right: 0.5px solid var(--border-color-primary);
@@ -650,7 +658,7 @@ input:checked + .chatbot-input-more-span {
 }
 #toolbox-area.showSide {
     width: var(--toolbox-width);
-    height: calc(100*var(--vh) - 65px);
+    height: calc(100dvh - 65px);
     visibility: visible;
     /* margin-left: 16px; */
 }
@@ -679,17 +687,17 @@ input:checked + .chatbot-input-more-span {
         /* right: calc(0px - var(--toolbox-width)); */
         z-index: 10008;
         overflow: unset;
-        top: calc(100*var(--vh));
+        top: 100dvh;
         margin: 0;
     }
     #toolbox-area > div {
         width: 100vw;
-        height: calc( 90*var(--vh) - 48px );
+        height: calc( 90dvh - 48px );
     }
     #toolbox-area.showSide {
         width: 100vw;
         right: 0;
-        top: calc( 10*var(--vh) + 48px );
+        top: calc( 10dvh + 48px );
         margin: 0;
         border-radius: 6px;
         box-shadow: 0 2px 64px 4px rgba(0, 0, 0, 0.2);
@@ -783,7 +791,7 @@ input:checked + .chatbot-input-more-span {
     }
     #chuanhu-popup {
         width: 100vw;
-        height: calc( 90*var(--vh) - 48px );
+        height: calc( 90dvh - 48px );
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
@@ -800,7 +808,7 @@ input:checked + .chatbot-input-more-span {
     }
     #toolbox-area > .gradio-group > div.styler > .gradio-tabs > div.tabitem,
     #chuanhu-popup .gradio-group > div.styler > .gradio-tabs > div.tabitem {
-        height: calc( 90*var(--vh) - 48px - 46px - 45px );
+        height: calc( 90dvh - 48px - 46px - 45px );
         overflow-x: auto;
         border: none;
     }
@@ -984,8 +992,8 @@ input:checked + .chatbot-input-more-span {
 } */
 
 #chuanhu-history {
-    max-height: calc(100*var(--vh) - 65px - 61px);
-    max-height: calc(100*var(--vh) - 65px - calc(36px + 12px + max(12px, env(safe-area-inset-bottom)) + 1px ));
+    max-height: calc(100dvh - 65px - 61px);
+    max-height: calc(100dvh - 65px - calc(36px + 12px + max(12px, env(safe-area-inset-bottom)) + 1px ));
     /* overflow-y: auto; */
 }
 #chuanhu-history > div {
@@ -1127,6 +1135,11 @@ input:checked + .chatbot-input-more-span {
     display: none;
 }
 
+#chatbot-area {
+    container-name: chatbot-area;
+    container-type: inline-size;
+}
+
 #chatbot-area.no-menu #chatbot-header {
     padding-left: max(20px, env(safe-area-inset-left));
 }
@@ -1238,20 +1251,43 @@ button:active .icon-need-hover, button:active.icon-need-hover {
     }
 }
 
+.generating-loader {
+    height: 12px;
+    width: 48px;
+    aspect-ratio: 4;
+    --_g: no-repeat radial-gradient(farthest-side, var(--body-text-color) 90%,#0000);
+    background: var(--_g), var(--_g), var(--_g), var(--_g);
+    background-size: 12% 48%;
+    animation: generating-dots 1s infinite linear;
+    opacity: 0.3;
+    margin: 6px 4.5px;
+}
+
+@keyframes generating-dots {
+    0%     {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    16.67% {background-position: calc(0*100%/3) 0   ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    33.33% {background-position: calc(0*100%/3) 100%,calc(1*100%/3) 0   ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+    50%    {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 100%,calc(2*100%/3) 0   ,calc(3*100%/3) 50% }
+    66.67% {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 100%,calc(3*100%/3) 0   }
+    83.33% {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 100%}
+    100%   {background-position: calc(0*100%/3) 50% ,calc(1*100%/3) 50% ,calc(2*100%/3) 50% ,calc(3*100%/3) 50% }
+}
+
+  
 /* .main-body {
     flex-wrap: nowrap;
     gap: 0;
     overflow: hidden;
     display: inline-flex;
     /* margin-top: 54px; */
-    /* height: calc(100*var(--vh) - 72px); */
+    /* height: calc(100dvh - 72px); */
     /* position: absolute;
     top: 48px;
 } */
 /* 
 .hide-body {
     display: none;
-    top: calc(-100*var(--vh));
+    top: calc(-100dvh);
     
 }
 #train-body {
@@ -1260,7 +1296,7 @@ button:active .icon-need-hover, button:active.icon-need-hover {
 
 #chuanhu-body.hide-body {
     display: none;
-    top: calc(100*var(--vh) + 48px);
+    top: calc(100dvh + 48px);
 }
 #chuanhu-body {
     transition: top 0.3s ease-in-out, display 0.3s ease;

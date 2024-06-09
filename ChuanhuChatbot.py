@@ -120,7 +120,7 @@ with gr.Blocks(theme=small_and_beautiful_theme) as demo:
                 with gr.Row(elem_id="chatbot-header"):
                     model_select_dropdown = gr.Dropdown(
                         label=i18n("选择模型"), choices=MODELS, multiselect=False, value=MODELS[DEFAULT_MODEL], interactive=True,
-                        show_label=False, container=False, elem_id="model-select-dropdown"
+                        show_label=False, container=False, elem_id="model-select-dropdown", filterable=False
                     )
                     lora_select_dropdown = gr.Dropdown(
                         label=i18n("选择模型"), choices=[], multiselect=False, interactive=True, visible=False,
@@ -140,6 +140,7 @@ with gr.Blocks(theme=small_and_beautiful_theme) as demo:
                         show_label=False,
                         avatar_images=[config.user_avatar, config.bot_avatar],
                         show_share_button=False,
+                        placeholder=setPlaceholder(model_name=MODELS[DEFAULT_MODEL]),
                     )
                 with gr.Row(elem_id="chatbot-footer"):
                     with gr.Column(elem_id="chatbot-input-box"):
@@ -198,6 +199,11 @@ with gr.Blocks(theme=small_and_beautiful_theme) as demo:
                 with gr.Tabs(elem_id="chuanhu-toolbox-tabs"):
                     with gr.Tab(label=i18n("对话")):
                         with gr.Accordion(label=i18n("模型"), open=not HIDE_MY_KEY, visible=not HIDE_MY_KEY):
+                            modelDescription = gr.Markdown(
+                                elem_id="gr-model-description",
+                                value=i18n(MODEL_METADATA[MODELS[DEFAULT_MODEL]]["description"]),
+                                visible=False,
+                            )
                             keyTxt = gr.Textbox(
                                 show_label=True,
                                 placeholder=f"Your API-key...",
@@ -512,8 +518,9 @@ with gr.Blocks(theme=small_and_beautiful_theme) as demo:
         if not hide_history_when_not_logged_in or user_name:
             loaded_stuff = current_model.auto_load()
         else:
+            current_model.new_auto_history_filename()
             loaded_stuff = [gr.update(), gr.update(), gr.Chatbot(label=MODELS[DEFAULT_MODEL]), current_model.single_turn, current_model.temperature, current_model.top_p, current_model.n_choices, current_model.stop_sequence, current_model.token_upper_limit, current_model.max_generation_token, current_model.presence_penalty, current_model.frequency_penalty, current_model.logit_bias, current_model.user_identifier]
-        return user_info, user_name, current_model, toggle_like_btn_visibility(DEFAULT_MODEL), *loaded_stuff, init_history_list(user_name, prepend=current_model.history_file_path[:-5])
+        return user_info, user_name, current_model, toggle_like_btn_visibility(DEFAULT_MODEL), *loaded_stuff, init_history_list(user_name, prepend=current_model.history_file_path.rstrip(".json"))
     demo.load(create_greeting, inputs=None, outputs=[
               user_info, user_name, current_model, like_dislike_area, saveFileName, systemPromptTxt, chatbot, single_turn_checkbox, temperature_slider, top_p_slider, n_choices_slider, stop_sequence_txt, max_context_length_slider, max_generation_slider, presence_penalty_slider, frequency_penalty_slider, logit_bias_txt, user_identifier_txt, historySelectList], api_name="load")
     chatgpt_predict_args = dict(
@@ -653,13 +660,13 @@ with gr.Blocks(theme=small_and_beautiful_theme) as demo:
     single_turn_checkbox.change(
         set_single_turn, [current_model, single_turn_checkbox], None, show_progress=False)
     model_select_dropdown.change(get_model, [model_select_dropdown, lora_select_dropdown, user_api_key, temperature_slider, top_p_slider, systemPromptTxt, user_name, current_model], [
-                                 current_model, status_display, chatbot, lora_select_dropdown, user_api_key, keyTxt], show_progress=True, api_name="get_model")
+                                 current_model, status_display, chatbot, lora_select_dropdown, user_api_key, keyTxt, modelDescription], show_progress=True, api_name="get_model")
     model_select_dropdown.change(toggle_like_btn_visibility, [model_select_dropdown], [
                                  like_dislike_area], show_progress=False)
     # model_select_dropdown.change(
     #     toggle_file_type, [model_select_dropdown], [index_files], show_progress=False)
     lora_select_dropdown.change(get_model, [model_select_dropdown, lora_select_dropdown, user_api_key, temperature_slider,
-                                top_p_slider, systemPromptTxt, user_name, current_model], [current_model, status_display, chatbot], show_progress=True)
+                                top_p_slider, systemPromptTxt, user_name, current_model], [current_model, status_display, chatbot, modelDescription], show_progress=True)
 
     # Template
     systemPromptTxt.change(set_system_prompt, [
